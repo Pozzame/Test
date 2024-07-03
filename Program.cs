@@ -20,7 +20,7 @@ Console.WriteLine("Non hai fatto ancora nessuna scenta"); //Avviso di pre selezi
 do
 {
     Console.WriteLine("Menù di selezione\n1 - Opzione 1\n2 - Opzione 2\n3 - Opzione 3\nq per uscire"); // Stampa menù
-    inserimento = Console.ReadKey(true).KeyChar; //Attente selezione
+    inserimento = Console.ReadKey(true).KeyChar; //Attende selezione
     Console.Clear(); //Cancella schermo
     if (inserimento == '1' || inserimento== '2' || inserimento == '3' || inserimento == 'q') //Verivica che la selezione sia valida
         Console.WriteLine($"Hai selezionato opzione {inserimento}"); //Stampa selezione
