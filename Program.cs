@@ -12,7 +12,7 @@ for (int i = 0;i<10;i++)
     Console.WriteLine( num +" "+ sum );
 }
 Console.WriteLine(sum);*/
-
+/*
 // Utilizzare un ciclo do wile per ripetere un menù di opzioni finkè l'utente non sceglie d uscire mantenendo il menù sempre nella stessa posizione
 char inserimento = 'o'; //Inizializza inserimento
 Console.Clear(); //Cancella consolle preventivo
@@ -27,4 +27,22 @@ do
         else Console.WriteLine("Scelta non valida"); //Avvisa di selezione errata
     Console.Beep(); //Bippa
 } while (inserimento != 'q'); //Esce con 'q'
-Console.WriteLine("Arrivederci");
+Console.WriteLine("Arrivederci");*/
+
+﻿try
+{
+    int zero = 0;
+    int numero = 1 / zero; // il programma si blocca perché non si può dividere per zero
+}
+catch (Exception e)
+{
+    Console.WriteLine("Divisione per zero");
+    Console.WriteLine($"ERRORE NON TRATTATO: {e.Message}");
+    Console.WriteLine($"CODICE ERRORE: {e.HResult}");
+    Console.WriteLine(e.Data); // stampa il dizionario di dati associato all'eccezione
+    return;
+}
+finally
+{
+    Console.WriteLine("Fine del programma");
+}
