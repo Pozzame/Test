@@ -28,7 +28,7 @@ do
     Console.Beep(); //Bippa
 } while (inserimento != 'q'); //Esce con 'q'
 Console.WriteLine("Arrivederci");*/
-
+/*
 ﻿try
 {
     int zero = 0;
@@ -45,4 +45,27 @@ catch (Exception e)
 finally
 {
     Console.WriteLine("Fine del programma");
-}
+}*/
+
+
+DateTime date1 = new DateTime(2023, 1, 2);
+DateTime date2 = new DateTime(2024, 1, 1);
+DateTime date3 = DateTime.Today;
+
+int result = date1.CompareTo(date2);
+int result1 = DateTime.Compare(date1, date2);
+
+TimeSpan difference = date3-date1;
+Console.WriteLine(difference.ToString());
+Console.WriteLine(difference.Days);
+Console.WriteLine(difference.Hours);
+Console.WriteLine(difference.TotalHours);
+
+
+DateTime date4 = date3.Add(difference);
+
+Console.WriteLine(date4);
+Console.WriteLine(date4.ToString());
+long pp = date1.Ticks;
+
+Console.ReadLine();
