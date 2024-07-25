@@ -71,7 +71,6 @@ long pp = date1.Ticks;
 Console.ReadLine();*/
 
 
-
 int.TryParse(Console.ReadLine(), out int risultato);
 
 Console.WriteLine(somma(3, 4, out risultato) +" "+ risultato + " " );
@@ -83,5 +82,3 @@ static int somma(int a, int b, out int risultato)
 {
     return risultato = a+b;
 }
-
-
