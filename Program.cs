@@ -70,7 +70,7 @@ long pp = date1.Ticks;
 
 Console.ReadLine();*/
 
-
+/*
 int.TryParse(Console.ReadLine(), out int risultato);
 
 Console.WriteLine(somma(3, 4, out risultato) +" "+ risultato + " " );
@@ -81,4 +81,190 @@ Console.WriteLine(somma(3, 4, out risultato) +" "+ risultato + " " );
 static int somma(int a, int b, out int risultato)
 {
     return risultato = a+b;
+}*/
+
+
+
+using Spectre.Console;
+using Newtonsoft.Json;
+using System.Collections;
+using System.Runtime.InteropServices;
+
+class Program{
+    const string CSVPATH = @".\data\csvFiles";
+    //const string CATPATH = @"C:\Users\francesco\Documents\workspace\firstPersonalProject\PcHArdwareInventory\data\productsCategories"; 
+    //const string CSVPATH = @".\data\csvFiles";
+    const string CATPATH = @"C:\\Users\\Pozzame\\Documents\\Corso_2024\\test\\data\\productscategories"; 
+    const string PROPERTIESFILE = "data.json"; // File di configurazione per ogni tipologia di prodotto proprietà/tipo di dato 
+    const string FILENAMEFILE = "fileName.txt";
+    static string selection = new string("");
+    static List<string> categories = CategoryList(); // Lista delle categorie di prodotti che viene letta dalle sottocartelle all'interno di .\data\productsCategories
+    
+    
+
+    static void Main(string[] args){
+        while(true){
+            Console.Clear();
+            selection = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+                .Title("\n[red]MANAGE WAREHOUSE[/]")
+                .PageSize(14)
+                .MoreChoicesText("[grey](Move up and down to make your choice)[/]")
+                .AddChoices(new string[] {
+                    "View Products", "Add Product", "Remove Product", "Exit",}));   // Voci del menu principale
+            switch(selection){
+                case "View Products":
+                    break;
+
+                case "Add Product":
+                    selection = AnsiConsole.Prompt(
+                    new SelectionPrompt<string>()
+                        .Title("\nProduct isertion")
+                        .PageSize(14)
+                        .MoreChoicesText("[grey](Move up and down to make your choice)[/]")
+                        .AddChoices(new string[] {"Insert manually", "Insert from .csv file", "Back",}));  // Sottomenu di Add product
+                    switch(selection){
+                        case "Insert manually":
+                            if(categories.Count > 0){
+                                categories.Add("Back");
+                                selection = AnsiConsole.Prompt(
+                                    new SelectionPrompt<string>()
+                                    .Title("\nSelect Product Category")
+                                    .PageSize(14)
+                                    .MoreChoicesText("[grey](Move up and down to make your choice)[/]")
+                                    .AddChoices(categories));           // Quando seleziono l'inserimento manuale di un prodotto mi viene richiesto che tipologia voglio inserire
+                                switch(selection){
+                                    case "Back":
+                                        break;
+                                    default:
+                                        InsertProductManually(PropertiesList(selection), selection);
+                                        break;
+                                }
+                            }else{
+                                Console.WriteLine("You have to add a Product Category\n\nPress a key...");
+                                Console.ReadKey();
+                            }
+                            categories.Remove("Back");
+                            break; 
+                        case "Insert from .csv file":
+                            break; 
+                        case "Back":
+                            break; 
+                    }
+                    break;
+
+                case "Remove Product":
+                    break;
+
+                case "Exit":
+                    return;
+            }
+        }
+    }
+    private static List<string> CsvFilesList(){ // Funzione che ritorna i nomi dei file .csv (senza percorso) presenti in una cartella
+        List<string> csvFilesFromFolder = new List<string>(Directory.GetFiles(CSVPATH)); 
+
+        if(csvFilesFromFolder.Count > 0){
+            for(int i = 0; i < csvFilesFromFolder.Count; i++){
+                csvFilesFromFolder[i] = Path.GetFileName(csvFilesFromFolder[i]);
+            }
+            return csvFilesFromFolder;
+        }else
+            return new List<string>();
+    }
+    private static List<string> CategoryList(){ // Funzione che ritorna la lista delle categorie di prodotti per popolare il sottomenu di "Add Product" 
+        List<string> productsCategories = new List<string>(Directory.GetDirectories(CATPATH)); 
+
+        if(productsCategories.Count > 0){
+            for(int i = 0; i < productsCategories.Count; i++){
+                productsCategories[i] = productsCategories[i].Remove(0, CATPATH.Length+1);
+            }
+            return productsCategories;
+        }else
+            return new List<string>();
+    }
+    private static string[][] PropertiesList(string category){  // funzione che restituisce per ogni linea in un file 
+        List<string> propertiesList = new List<string>();       // di configurazione in lettura la proprietà e il tipo di dato
+        string[][] properties;                                  // che la rappresenta
+        string line;
+            
+        using(StreamReader sr = new StreamReader(Path.Combine(CATPATH, category, PROPERTIESFILE))){
+            while((line = sr.ReadLine()!) != null){
+                propertiesList.Add(line);
+            }
+
+            properties = new string[propertiesList.Count][];
+
+            for(int i = 0; i < propertiesList.Count; i++){
+                properties[i] = propertiesList[i].Split(",");
+            }
+        }
+        return properties;
+    }
+
+    private static void InsertProductManually(string[][] properties, string item){      // Funzione che prende la lista delle proprietà del prodotto e la categoria 
+        bool success = false;                                                           // e permette l'inserimento dei campi e salva un nuovo file .json nella cartella
+        string stringProperty;         
+        string file = "0";
+
+        string path = Path.Combine(CATPATH, item, file + ".json");
+
+        File.Create(path).Close();
+
+        for(int i = 0;i < properties.Length; i++){
+            success = false;
+            do{
+                Console.Clear();
+                Console.WriteLine($"Insert a value for the {properties[i][0]} property: \n");
+                Console.Write($"{properties[i][0]} --> ");
+                stringProperty = Console.ReadLine()!;
+
+                
+
+                if(properties[i][1] != "int"){
+                    if(stringProperty != ""){
+                        properties[i][1] = stringProperty;/*
+                        if(i == 0)
+                            File.AppendAllText(path, "{\n"+"\""+properties[i][0] + ": " + stringProperty + ",\n"); 
+                        else if(i == (properties.Length-1))
+                            File.AppendAllText(path, properties[i][0] + ": " + stringProperty + "\n}");
+                        else
+                            File.AppendAllText(path, properties[i][0] + ": "+stringProperty + ",\n");
+                        */success = true;
+                    }
+                    else{
+                        Console.WriteLine($"The value for the {properties[i][0]} property can't be empty!\nPress a key...");
+                        Console.ReadKey();
+                    }    
+                }else{
+                    if(int.TryParse(stringProperty, out int result)){
+                        properties[i][1] = stringProperty;/*
+                        if(i == 0)
+                            File.AppendAllText(path, "{\n"+properties[i][0]+": "+result+",\n");
+                        else if(i == (properties.Length-1))
+                            File.AppendAllText(path, properties[i][0]+": "+result + "\n}");
+                        else
+                            File.AppendAllText(path, properties[i][0] + ": " + result + ",\n");
+                        */success = true;
+                    }else{
+                        Console.WriteLine($"The value for the {properties[i][0]} property must be a valid number!\nPress a key...");
+                        Console.ReadKey();
+                    }
+
+                }
+
+            }while(!success);
+            
+        }
+
+
+        using (StreamWriter sw = new StreamWriter(path)){                           // creazione del file .json e generazione di un nome file
+            sw.Write(JsonConvert.SerializeObject(properties, Formatting.Indented));   // numerico progressivo e univoco
+        }
+
+        //File.WriteAllText(Path.Combine(CATPATH, item, "fileName.txt"), (cpuFileName+1).ToString());
+
+            
+        
+    }
 }
